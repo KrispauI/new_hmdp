@@ -88,7 +88,7 @@ public class VoucherOrderServiceImpl extends ServiceImpl<VoucherOrderMapper, Vou
         // 判断
         if (!isLock) {
             // 获取锁失败，直接返回失败或者重试
-            log.error("获取锁失败！");
+            log.error("获取用户ID锁失败！用户正在下单...");
             return;
         }
 
@@ -238,7 +238,7 @@ public class VoucherOrderServiceImpl extends ServiceImpl<VoucherOrderMapper, Vou
             return Result.fail("库存不足！");
         }
         //3. 乐观锁扣减库存
-        boolean success = seckillVoucherService.update()
+        boolean success = commonVoucherService.update()
                 .setSql("stock= stock -" + buyNumber)
                 .eq("voucher_id", voucherId)
                 .ge("stock", buyNumber)
@@ -314,7 +314,7 @@ public class VoucherOrderServiceImpl extends ServiceImpl<VoucherOrderMapper, Vou
             }
 
             //5. 乐观锁扣减库存
-            boolean success = seckillVoucherService.update()
+            boolean success = limitVoucherService.update()
                     .setSql("stock= stock -" + buyNumber)
                     .eq("voucher_id", voucherId)
                     .ge("stock", buyNumber)
